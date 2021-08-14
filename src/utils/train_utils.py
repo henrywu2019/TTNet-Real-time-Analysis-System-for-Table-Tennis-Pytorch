@@ -74,14 +74,16 @@ def get_saved_state(model, optimizer, lr_scheduler, epoch, configs, best_val_los
     return saved_state
 
 
-def save_checkpoint(checkpoints_dir, saved_fn, saved_state, is_best, epoch):
+def save_checkpoint(model, checkpoints_dir, saved_fn, saved_state, is_best, epoch):
     """Save checkpoint every epoch only is best model or after every checkpoint_freq epoch"""
     if is_best:
         save_path = os.path.join(checkpoints_dir, '{}_best.pth'.format(saved_fn))
     else:
         save_path = os.path.join(checkpoints_dir, '{}_epoch_{}.pth'.format(saved_fn, epoch))
 
+    model_pt = save_path.replace(".pth", ".pt")
     torch.save(saved_state, save_path)
+    torch.save(model, model_pt)
     print('save a checkpoint at {}'.format(save_path))
 
 

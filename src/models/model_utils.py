@@ -82,7 +82,8 @@ def load_weights_local_stage(pretrained_dict):
 def load_pretrained_model(model, pretrained_path, gpu_idx, overwrite_global_2_local):
     """Load weights from the pretrained model"""
     assert os.path.isfile(pretrained_path), "=> no checkpoint found at '{}'".format(pretrained_path)
-    if gpu_idx is None:
+    #if gpu_idx is None:
+    if 1:
         checkpoint = torch.load(pretrained_path, map_location='cpu')
     else:
         # Map model to be loaded to specified single gpu.
@@ -130,6 +131,11 @@ def resume_model(resume_path, arch, gpu_idx):
 
 
 def make_data_parallel(model, configs):
+    return model
+    # Use distributed CPU
+    print("Use distributed CPU🤦")
+    return torch.nn.parallel.DistributedDataParallel(model, device_ids=[],
+                                                              find_unused_parameters=True)
     if configs.distributed:
         # For multiprocessing distributed, DistributedDataParallel constructor
         # should always set the single device scope, otherwise,
@@ -154,8 +160,10 @@ def make_data_parallel(model, configs):
         model = model.cuda(configs.gpu_idx)
     else:
         # DataParallel will divide and allocate batch_size to all available GPUs
-        model = torch.nn.DataParallel(model).cuda()
-
+        try:
+            model = torch.nn.DataParallel(model).cuda()
+        except Exception as e:
+            return model
     return model
 
 

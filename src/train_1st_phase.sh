@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 python main.py \
   --working-dir '../' \
   --saved_fn 'ttnet_1st_phase' \
@@ -10,7 +12,6 @@ python main.py \
   --lr_type 'step_lr' \
   --lr_step_size 10 \
   --lr_factor 0.1 \
-  --gpu_idx 0 \
   --global_weight 5. \
   --seg_weight 1. \
   --no_local \

@@ -9,12 +9,14 @@
 # Description: This script creates the video loader for testing with an input video
 """
 
-import os
+import os, sys
 from collections import deque
 
 import cv2
 import numpy as np
 
+CUR_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(CUR_DIR+"/../")
 
 class TTNet_Video_Loader:
     """The loader for demo with a video input"""

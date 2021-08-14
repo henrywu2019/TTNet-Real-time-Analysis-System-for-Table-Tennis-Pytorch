@@ -16,7 +16,7 @@ import torch.nn.functional as F
 
 class ConvBlock(nn.Module):
     def __init__(self, in_channels, out_channels):
-        super(ConvBlock, self).__init__()
+        super().__init__()
         self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1)
         self.batchnorm = nn.BatchNorm2d(out_channels)
         self.relu = nn.ReLU()
@@ -29,7 +29,7 @@ class ConvBlock(nn.Module):
 
 class ConvBlock_without_Pooling(nn.Module):
     def __init__(self, in_channels, out_channels):
-        super(ConvBlock_without_Pooling, self).__init__()
+        super().__init__()
         self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1)
         self.batchnorm = nn.BatchNorm2d(out_channels)
         self.relu = nn.ReLU()
@@ -41,7 +41,7 @@ class ConvBlock_without_Pooling(nn.Module):
 
 class DeconvBlock(nn.Module):
     def __init__(self, in_channels, out_channels):
-        super(DeconvBlock, self).__init__()
+        super().__init__()
         middle_channels = int(in_channels / 4)
         self.conv1 = nn.Conv2d(in_channels, middle_channels, kernel_size=1, stride=1, padding=0)
         self.batchnorm1 = nn.BatchNorm2d(middle_channels)
@@ -62,7 +62,7 @@ class DeconvBlock(nn.Module):
 
 class BallDetection(nn.Module):
     def __init__(self, num_frames_sequence, dropout_p):
-        super(BallDetection, self).__init__()
+        super().__init__()
         self.conv1 = nn.Conv2d(num_frames_sequence * 3, 64, kernel_size=1, stride=1, padding=0)
         self.batchnorm = nn.BatchNorm2d(64)
         self.relu = nn.ReLU()
@@ -220,7 +220,7 @@ class TTNet(nn.Module):
         return pred_ball_global, pred_ball_local, pred_events, pred_seg
 
     def __normalize__(self, x):
-        if not self.mean.is_cuda:
+        if self.mean.is_cuda:
             self.mean = self.mean.cuda()
             self.std = self.std.cuda()
 

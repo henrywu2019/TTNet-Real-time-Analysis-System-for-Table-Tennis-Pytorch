@@ -16,7 +16,8 @@ import argparse
 from easydict import EasyDict as edict
 import sys
 
-sys.path.append('../')
+CUR_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(CUR_DIR+"/../")
 
 from utils.misc import make_folder
 
@@ -83,7 +84,7 @@ def parse_configs():
 
     parser.add_argument('--start_epoch', type=int, default=1, metavar='N',
                         help='the starting epoch')
-    parser.add_argument('--num_epochs', type=int, default=30, metavar='N',
+    parser.add_argument('--num_epochs', type=int, default=1, metavar='N',
                         help='number of total epochs to run')
     parser.add_argument('--lr', type=float, default=1e-3, metavar='LR',
                         help='initial learning rate')
@@ -181,14 +182,16 @@ def parse_configs():
     ####################################################################
     ############## Hardware configurations ############################
     ####################################################################
+    configs.no_cuda = not torch.cuda.is_available()
     configs.device = torch.device('cpu' if configs.no_cuda else 'cuda')
     configs.ngpus_per_node = torch.cuda.device_count()
 
-    configs.pin_memory = True
+    configs.pin_memory = not configs.no_cuda
 
     ####################################################################
     ##############     Data configs            ###################
     ####################################################################
+    configs.working_dir = "/home/ubuntu/git.repo/TTNet-Real-time-Analysis-System-for-Table-Tennis-Pytorch"
     configs.dataset_dir = os.path.join(configs.working_dir, 'dataset')
     configs.train_game_list = ['game_1', 'game_2', 'game_3', 'game_4', 'game_5']
     configs.test_game_list = ['test_1', 'test_2', 'test_3', 'test_4', 'test_5', 'test_6', 'test_7']
@@ -244,6 +247,7 @@ def parse_configs():
     ############## logs, Checkpoints, and results dir ########################
     ####################################################################
     configs.checkpoints_dir = os.path.join(configs.working_dir, 'checkpoints', configs.saved_fn)
+    print(f"🐻 configs.checkpoints_dir: {configs.checkpoints_dir}")
     configs.logs_dir = os.path.join(configs.working_dir, 'logs', configs.saved_fn)
     configs.use_best_checkpoint = True
 

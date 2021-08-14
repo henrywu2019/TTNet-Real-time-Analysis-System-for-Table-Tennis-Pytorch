@@ -24,6 +24,9 @@ from utils.logger import Logger
 from config.config import parse_configs
 
 
+#torch.set_num_threads(64)
+
+
 def main():
     configs = parse_configs()
 
@@ -44,9 +47,10 @@ def main():
 
     configs.distributed = configs.world_size > 1 or configs.multiprocessing_distributed
 
-    if configs.multiprocessing_distributed:
-        configs.world_size = configs.ngpus_per_node * configs.world_size
-        mp.spawn(main_worker, nprocs=configs.ngpus_per_node, args=(configs,))
+    #if configs.multiprocessing_distributed:
+    if False:
+        configs.world_size = 4
+        mp.spawn(main_worker, nprocs=8, args=(configs,))
     else:
         main_worker(configs.gpu_idx, configs)
 
@@ -58,16 +62,21 @@ def main_worker(gpu_idx, configs):
         print("Use GPU: {} for training".format(configs.gpu_idx))
         configs.device = torch.device('cuda:{}'.format(configs.gpu_idx))
 
-    if configs.distributed:
+    if False:
         if configs.dist_url == "env://" and configs.rank == -1:
             configs.rank = int(os.environ["RANK"])
         if configs.multiprocessing_distributed:
             # For multiprocessing distributed training, rank needs to be the
             # global rank among all the processes
             configs.rank = configs.rank * configs.ngpus_per_node + gpu_idx
-
-        dist.init_process_group(backend=configs.dist_backend, init_method=configs.dist_url,
-                                world_size=configs.world_size, rank=configs.rank)
+        
+        configs.rank = gpu_idx
+        print("configs.rank", configs.rank)
+        print("configs.dist_url", configs.dist_url)
+        dist.init_process_group(backend=configs.dist_backend,
+                                init_method=configs.dist_url,
+                                world_size=configs.world_size,
+                                rank=configs.rank)
 
     configs.is_master_node = (not configs.distributed) or (
             configs.distributed and (configs.rank % configs.ngpus_per_node == 0))
@@ -164,10 +173,12 @@ def main_worker(gpu_idx, configs):
         if tb_writer is not None:
             tb_writer.add_scalars('Loss', loss_dict, epoch)
         # Save checkpoint
-        if configs.is_master_node and (is_best or ((epoch % configs.checkpoint_freq) == 0)):
+        # if configs.is_master_node and (is_best or ((epoch % configs.checkpoint_freq) == 0)):
+        if True:
             saved_state = get_saved_state(model, optimizer, lr_scheduler, epoch, configs, best_val_loss,
                                           earlystop_count)
-            save_checkpoint(configs.checkpoints_dir, configs.saved_fn, saved_state, is_best, epoch)
+            ensure_folder(configs.checkpoints_dir)
+            save_checkpoint(model, configs.checkpoints_dir, configs.saved_fn, saved_state, is_best, epoch)
         # Check early stop training
         if configs.earlystop_patience is not None:
             earlystop_count = 0 if is_best else (earlystop_count + 1)
@@ -191,6 +202,10 @@ def main_worker(gpu_idx, configs):
     if configs.distributed:
         cleanup()
 
+def ensure_folder(output_dir):
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    return output_dir
 
 def cleanup():
     dist.destroy_process_group()
@@ -231,7 +246,7 @@ def train_one_epoch(train_loader, model, optimizer, epoch, configs, logger):
             reduced_loss = total_loss.data
         losses.update(to_python_float(reduced_loss), batch_size)
         # measure elapsed time
-        torch.cuda.synchronize()
+        # torch.cuda.synchronize()
         batch_time.update(time.time() - start_time)
 
         # Log message
@@ -274,7 +289,7 @@ def evaluate_one_epoch(val_loader, model, epoch, configs, logger):
                 reduced_loss = total_loss.data
             losses.update(to_python_float(reduced_loss), batch_size)
             # measure elapsed time
-            torch.cuda.synchronize()
+            # torch.cuda.synchronize()
             batch_time.update(time.time() - start_time)
 
             # Log message
