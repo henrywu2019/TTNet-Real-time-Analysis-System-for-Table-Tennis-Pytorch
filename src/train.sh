@@ -34,7 +34,7 @@ python main.py \
   --seg_weight 0. \
   --event_weight 2. \
   --local_weight 1. \
-  --pretrained_path ../checkpoints/ttnet_1st_phase/ttnet_1st_phase_epoch_30.pth \
+  --pretrained_path ../checkpoints/ttnet_1st_phase/ttnet_1st_phase_epoch_3.pth \
   --overwrite_global_2_local \
   --freeze_seg \
   --freeze_global \
@@ -56,5 +56,5 @@ python main.py \
   --seg_weight 1. \
   --event_weight 1. \
   --local_weight 1. \
-  --pretrained_path ../checkpoints/ttnet_2nd_phase/ttnet_2nd_phase_epoch_30.pth \
+  --pretrained_path ../checkpoints/ttnet_2nd_phase/ttnet_2nd_phase_epoch_3.pth \
   --smooth-labelling

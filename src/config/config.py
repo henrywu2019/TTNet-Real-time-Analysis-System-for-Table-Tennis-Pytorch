@@ -84,7 +84,7 @@ def parse_configs():
 
     parser.add_argument('--start_epoch', type=int, default=1, metavar='N',
                         help='the starting epoch')
-    parser.add_argument('--num_epochs', type=int, default=1, metavar='N',
+    parser.add_argument('--num_epochs', type=int, default=3, metavar='N',
                         help='number of total epochs to run')
     parser.add_argument('--lr', type=float, default=1e-3, metavar='LR',
                         help='initial learning rate')
