@@ -22,7 +22,7 @@ from data_process.ttnet_data_utils import create_target_ball
 
 class Unbalance_Loss_Model(nn.Module):
     def __init__(self, model, tasks_loss_weight, weights_events, input_size, sigma, thresh_ball_pos_mask, device):
-        super(Unbalance_Loss_Model, self).__init__()
+        super().__init__()
         self.model = model
         self.tasks_loss_weight = torch.tensor(tasks_loss_weight)
         self.tasks_loss_weight = self.tasks_loss_weight / self.tasks_loss_weight.sum()

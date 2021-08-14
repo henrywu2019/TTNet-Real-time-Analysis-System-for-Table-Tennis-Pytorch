@@ -101,7 +101,7 @@ class BallDetection(nn.Module):
 
 class EventsSpotting(nn.Module):
     def __init__(self, dropout_p):
-        super(EventsSpotting, self).__init__()
+        super().__init__()
         self.conv1 = nn.Conv2d(512, 64, kernel_size=1, stride=1, padding=0)
         self.batchnorm = nn.BatchNorm2d(64)
         self.relu = nn.ReLU()
@@ -129,7 +129,7 @@ class EventsSpotting(nn.Module):
 
 class Segmentation(nn.Module):
     def __init__(self):
-        super(Segmentation, self).__init__()
+        super().__init__()
         self.deconvblock5 = DeconvBlock(in_channels=256, out_channels=128)
         self.deconvblock4 = DeconvBlock(in_channels=128, out_channels=128)
         self.deconvblock3 = DeconvBlock(in_channels=128, out_channels=64)
@@ -150,20 +150,16 @@ class Segmentation(nn.Module):
 
         x = x + out_block2
         x = self.deconvblock2(x)
-
         x = self.relu(self.tconv(x))
-
         x = self.relu(self.conv1(x))
-
         out = self.sigmoid(self.conv2(x))
-
         return out
 
 
 class TTNet(nn.Module):
     def __init__(self, dropout_p, tasks, input_size, thresh_ball_pos_mask, num_frames_sequence,
                  mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)):
-        super(TTNet, self).__init__()
+        super().__init__()
         self.tasks = tasks
         self.ball_local_stage, self.events_spotting, self.segmentation = None, None, None
         self.ball_global_stage = BallDetection(num_frames_sequence=num_frames_sequence, dropout_p=dropout_p)

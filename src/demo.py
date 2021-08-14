@@ -35,11 +35,12 @@ def demo(configs):
         if not os.path.isdir(configs.frame_dir):
             os.makedirs(configs.frame_dir)
 
-    configs.device = torch.device('cuda:{}'.format(configs.gpu_idx))
+    #configs.device = torch.device('cuda:{}'.format(configs.gpu_idx))
+    configs.device = torch.device('cpu')
 
     # model
     model = create_model(configs)
-    model.cuda()
+    #model.cuda()
 
     assert configs.pretrained_path is not None, "Need to load the pre-trained model"
     model = load_pretrained_model(model, configs.pretrained_path, configs.gpu_idx, configs.overwrite_global_2_local)
@@ -91,12 +92,15 @@ def demo(configs):
             queue_frames.append(frame_pred_infor)
 
             frame_idx += 1
-            print('Done frame_idx {} - time {:.3f}s'.format(frame_idx, t2 - t1))
+            #print('Done frame_idx {} - time {:.3f}s'.format(frame_idx, t2 - t1))
+            print('.', end='')
 
     if configs.output_format == 'video':
+        print("ffmpeg")
         output_video_path = os.path.join(configs.save_demo_dir, 'result.mp4')
         cmd_str = 'ffmpeg -f image2 -i {}/%05d.jpg -b 5000k -c:v mpeg4 {}'.format(
             os.path.join(configs.frame_dir), output_video_path)
+        print(cmd_str)
         os.system(cmd_str)
 
 

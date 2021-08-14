@@ -4,7 +4,7 @@ import torch
 
 class Ball_Detection_Loss(nn.Module):
     def __init__(self, w, h, epsilon=1e-9):
-        super(Ball_Detection_Loss, self).__init__()
+        super().__init__()
         self.w = w
         self.h = h
         self.epsilon = epsilon
@@ -24,7 +24,7 @@ class Ball_Detection_Loss(nn.Module):
 
 class Events_Spotting_Loss(nn.Module):
     def __init__(self, weights=(1, 3), num_events=2, epsilon=1e-9):
-        super(Events_Spotting_Loss, self).__init__()
+        super().__init__()
         self.weights = torch.tensor(weights).view(1, 2)
         self.weights = self.weights / self.weights.sum()
         self.num_events = num_events
@@ -37,7 +37,7 @@ class Events_Spotting_Loss(nn.Module):
 
 class DICE_Smotth_Loss(nn.Module):
     def __init__(self, epsilon=1e-9):
-        super(DICE_Smotth_Loss, self).__init__()
+        super().__init__()
         self.epsilon = epsilon
 
     def forward(self, pred_seg, target_seg):
@@ -46,7 +46,7 @@ class DICE_Smotth_Loss(nn.Module):
 
 class BCE_Loss(nn.Module):
     def __init__(self, epsilon=1e-9):
-        super(BCE_Loss, self).__init__()
+        super().__init__()
         self.epsilon = epsilon
 
     def forward(self, pred_seg, target_seg):
@@ -55,7 +55,7 @@ class BCE_Loss(nn.Module):
 
 class Segmentation_Loss(nn.Module):
     def __init__(self, bce_weight=0.5):
-        super(Segmentation_Loss, self).__init__()
+        super().__init__()
         self.bce_criterion = BCE_Loss(epsilon=1e-9)
         self.dice_criterion = DICE_Smotth_Loss(epsilon=1e-9)
         self.bce_weight = bce_weight
