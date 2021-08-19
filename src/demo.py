@@ -93,12 +93,12 @@ def demo(configs):
 
             frame_idx += 1
             #print('Done frame_idx {} - time {:.3f}s'.format(frame_idx, t2 - t1))
-            print('.', end='')
+            print('.', end='', flush=True)
 
     if configs.output_format == 'video':
         print("ffmpeg")
         output_video_path = os.path.join(configs.save_demo_dir, 'result.mp4')
-        cmd_str = 'ffmpeg -f image2 -i {}/%05d.jpg -b 5000k -c:v mpeg4 {}'.format(
+        cmd_str = 'ffmpeg -f image2 -pattern_type glob -i "{}/*.jpg" -b 5000k -c:v mpeg4 {}'.format(
             os.path.join(configs.frame_dir), output_video_path)
         print(cmd_str)
         os.system(cmd_str)

@@ -54,9 +54,11 @@ class TTNet_Video_Loader:
         self.count += 1
         if self.count == len(self):
             raise StopIteration
-        # Read image
 
+        # Read image
         ret, frame = self.cap.read()  # BGR
+        if not ret:
+            raise StopIteration
         assert ret, 'Failed to load frame {:d}'.format(self.count)
         self.images_sequence.append(cv2.resize(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB), (self.width, self.height)))
         resized_imgs = np.dstack(self.images_sequence)  # (128, 320, 27)
